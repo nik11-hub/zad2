@@ -1,0 +1,14 @@
+# Pliki systemowe
+.DS_Store
+Thumbs.db
+
+# Pliki środowiskowe i wrażliwe dane
+.env
+*.local
+.ssh/
+secrets.txt
+
+# Katalogi narzędziowe i buildy lokalne
+node_modules/
+dist/
+build/
