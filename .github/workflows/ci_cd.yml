@@ -47,12 +47,18 @@ jobs:
             type=sha,priority=100,prefix=sha-,format=short
             type=semver,priority=200,pattern={{version}}
 
+      - name: Konfiguracja SSH Agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - name: Build local image for CVE scanning
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           load: true
+          ssh: default=${{ env.SSH_AUTH_SOCK }}
           tags: local-scan-image:latest
 
       - name: Run Trivy vulnerability scanner
@@ -72,6 +78,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
+          ssh: default=${{ env.SSH_AUTH_SOCK }}
           cache-from: type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/pawcho-cache:cache
           cache-to: type=registry,ref=${{ vars.DOCKERHUB_USERNAME }}/pawcho-cache:cache,mode=max
           tags: ${{ steps.meta.outputs.tags }}
